@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07110f">
+<title>E‑Message — Real Chat</title>
+<style>
+:root{--bg:#06100e;--panel:#0b1714;--panel2:#10201c;--line:#20332e;--text:#f1f7f5;--muted:#9aaea8;--accent:#19c37d;--accent2:#0fa968;--danger:#ef4444}
+*{box-sizing:border-box}body{margin:0;background:#020807;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;height:100vh;overflow:hidden}
+button,input{font:inherit}button{cursor:pointer;border:0}.app{height:100vh;display:flex;background:linear-gradient(120deg,rgba(3,12,10,.96),rgba(4,13,12,.88)),url("emessage-background.jpg") center/cover fixed}
+.sidebar{width:370px;background:rgba(7,18,15,.92);border-right:1px solid var(--line);backdrop-filter:blur(18px);display:flex;flex-direction:column}.brand{padding:18px 20px;font-size:22px;font-weight:800;display:flex;justify-content:space-between;align-items:center}.brand b{color:var(--accent)}.me{font-size:12px;color:var(--muted);margin-top:3px;font-weight:500}
+.topbar{display:flex;gap:8px;padding:0 14px 12px}.topbar button,.filter button{background:transparent;color:var(--muted);padding:9px 12px;border-radius:10px}.topbar button.active,.filter button.active{background:#17342a;color:#eafff7}
+.search{margin:0 14px 10px}.search input{width:100%;background:#0f211c;border:1px solid #1c332c;border-radius:12px;color:white;padding:12px 14px;outline:none}.search input:focus{border-color:#28604d}
+.filter{display:flex;gap:5px;padding:0 14px 12px;overflow:auto}.filter button{white-space:nowrap;font-size:12px}.chatlist{overflow:auto;flex:1}.chat{display:flex;gap:12px;padding:12px 16px;align-items:center;border-bottom:1px solid rgba(255,255,255,.025);transition:.18s}.chat:hover,.chat.selected{background:rgba(30,70,57,.48)}.avatar{width:50px;height:50px;border-radius:50%;object-fit:cover;background:#17372c;flex:none}.chatmain{min-width:0;flex:1}.row{display:flex;justify-content:space-between;gap:8px}.name{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.time,.preview{color:var(--muted);font-size:12px}.preview{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}.badge{background:var(--accent);color:#02120c;border-radius:99px;min-width:20px;height:20px;padding:0 6px;display:grid;place-items:center;font-size:11px;font-weight:800}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;background:rgba(3,11,10,.58);backdrop-filter:blur(14px)}.empty{margin:auto;text-align:center;color:var(--muted)}.empty strong{display:block;color:white;font-size:25px;margin-bottom:7px}
+.header{height:70px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:10px 16px;background:rgba(7,18,15,.82)}.back{display:none;background:transparent;color:white;font-size:23px}.headinfo{flex:1;min-width:0}.headname{font-weight:800}.status{font-size:12px;color:var(--accent);margin-top:2px}.callbtns{display:flex;gap:7px}.icon{width:40px;height:40px;border-radius:50%;background:#12271f;color:white;display:grid;place-items:center;font-size:19px}.icon:hover{background:#1a3a2e}
+.messages{flex:1;overflow:auto;padding:22px 6%;display:flex;flex-direction:column;gap:7px;background:rgba(0,0,0,.14)}.bubble{max-width:min(70%,520px);padding:9px 12px;border-radius:13px;line-height:1.4;box-shadow:0 3px 12px rgba(0,0,0,.16)}.mine{align-self:flex-end;background:#075c4a;border-bottom-right-radius:4px}.theirs{align-self:flex-start;background:#17251f;border-bottom-left-radius:4px}.meta{font-size:10px;color:#a8bbb4;text-align:right;margin-top:4px}.composer{display:flex;gap:8px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:rgba(7,18,15,.92)}.composer input{flex:1;background:#12231e;border:1px solid #203a31;color:white;border-radius:22px;padding:12px 15px;outline:none}.send{width:46px;height:46px;border-radius:50%;background:var(--accent);color:#032017;font-weight:900}
+.auth{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(0,0,0,.74);backdrop-filter:blur(20px);padding:18px}.authbox{width:min(430px,100%);background:#0a1713;border:1px solid #294138;border-radius:25px;padding:28px;box-shadow:0 30px 100px #000}.authbox h1{margin:0 0 5px}.authbox p{color:var(--muted);font-size:14px}.authbox input{width:100%;margin:7px 0;background:#10221c;border:1px solid #294138;color:#fff;border-radius:12px;padding:13px;outline:none}.primary{width:100%;padding:13px;border-radius:12px;background:var(--accent);font-weight:800;margin-top:8px}.switch{background:transparent;color:#72e6b5;margin-top:12px;width:100%}.error{color:#ff8e8e;font-size:13px;min-height:20px;margin-top:5px}.ok{color:#7cf0bd}.call{position:fixed;inset:0;z-index:80;display:none;place-items:center;background:rgba(0,0,0,.78);backdrop-filter:blur(22px)}.call.show{display:grid}.callbox{width:min(850px,96vw);height:min(700px,94vh);background:#050a09;border:1px solid #294138;border-radius:28px;overflow:hidden;position:relative;box-shadow:0 30px 120px #000}.remote{width:100%;height:100%;object-fit:cover;background:radial-gradient(circle,#18362b,#020807)}.self{position:absolute;right:18px;top:18px;width:170px;height:230px;object-fit:cover;border-radius:18px;border:1px solid #ffffff33;background:#111}.calltop{position:absolute;top:16px;left:18px;right:210px;z-index:2}.callname{font-weight:800;font-size:20px}.callstate{font-size:12px;color:#b8c9c3}.controls{position:absolute;bottom:20px;left:0;right:0;display:flex;justify-content:center;gap:12px}.control{width:54px;height:54px;border-radius:50%;background:#1b2a25;color:white}.end{background:#e53935}.toast{position:fixed;left:50%;bottom:25px;transform:translateX(-50%) translateY(20px);opacity:0;background:#12221d;border:1px solid #315147;padding:10px 15px;border-radius:12px;z-index:100;transition:.2s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:760px){.sidebar{width:100%}.main{display:none}.app.chatopen .sidebar{display:none}.app.chatopen .main{display:flex}.back{display:block}.messages{padding:16px 4%}.bubble{max-width:82%}.callbox{width:100%;height:100%;border-radius:0}.self{width:110px;height:155px}}
+
+/* PREMIUM FIRST-LAUNCH ONBOARDING */
+#onboarding{position:fixed;inset:0;z-index:99999;background:#05070b;color:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden}#onboarding.hidden{display:none}.ob-glow{position:absolute;width:420px;height:420px;border-radius:50%;filter:blur(90px);opacity:.22;background:#1687ff;top:-140px;right:-120px}.ob-glow2{position:absolute;width:360px;height:360px;border-radius:50%;filter:blur(100px);opacity:.18;background:#7c3cff;bottom:-170px;left:-120px}.ob-wrap{width:min(430px,92vw);height:min(760px,92vh);display:flex;flex-direction:column;position:relative}.ob-top{display:flex;justify-content:flex-end;padding:8px 0}.ob-skip{background:transparent;border:0;color:#8f9bad;font-weight:700;padding:10px}.ob-slides{flex:1;display:flex;align-items:center;justify-content:center}.ob-slide{display:none;text-align:center;animation:obIn .35s ease}.ob-slide.active{display:block}@keyframes obIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}.ob-logo{width:88px;height:88px;border-radius:28px;margin:0 auto 28px;display:grid;place-items:center;background:linear-gradient(145deg,#1687ff,#5d3cff);box-shadow:0 18px 55px rgba(22,135,255,.28);font-size:35px;font-weight:900}.ob-slide h1{font-size:38px;margin:0 0 12px;letter-spacing:-1.5px}.ob-slide h2{font-size:29px;margin:0 0 12px}.ob-slide p{color:#9da9ba;line-height:1.65;margin:auto;max-width:350px;font-size:15px}.ob-icon{width:112px;height:112px;border-radius:34px;margin:0 auto 28px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09);display:grid;place-items:center;font-size:48px}.ob-dots{display:flex;justify-content:center;gap:7px;margin:18px 0}.ob-dot{width:7px;height:7px;border-radius:99px;background:#3a4350;transition:.25s}.ob-dot.active{width:23px;background:#1687ff}.ob-actions{display:flex;gap:10px}.ob-btn{height:54px;border-radius:17px;border:1px solid rgba(255,255,255,.1);font-weight:800;font-size:15px}.ob-next{flex:1;background:#1687ff;color:#fff;border:0}.ob-back{width:92px;background:#111722;color:#aab5c5}
+#authScreen{position:fixed;inset:0;z-index:99998;display:none;align-items:center;justify-content:center;background:#05070b;color:#fff;overflow:auto;padding:24px}#authScreen.show{display:flex}.auth-card{width:min(430px,100%);background:rgba(13,17,25,.94);border:1px solid rgba(255,255,255,.08);border-radius:28px;padding:28px;box-shadow:0 25px 90px rgba(0,0,0,.45)}.auth-brand{display:flex;align-items:center;gap:12px;margin-bottom:24px}.auth-brand-mark{width:48px;height:48px;border-radius:15px;background:linear-gradient(145deg,#1687ff,#5d3cff);display:grid;place-items:center;font-weight:900}.auth-brand b{font-size:21px}.auth-sub{color:#8f9bad;font-size:13px}.auth-card h2{font-size:29px;margin:8px 0}.auth-card p{color:#8f9bad;line-height:1.55;font-size:14px}.auth-tabs{display:grid;grid-template-columns:1fr 1fr;background:#090d14;border-radius:14px;padding:4px;margin:22px 0}.auth-tab{height:40px;border:0;background:transparent;color:#7f8b9c;border-radius:11px;font-weight:800}.auth-tab.active{background:#1a2433;color:#fff}.auth-form input{width:100%;box-sizing:border-box;height:51px;border-radius:14px;background:#090d14;border:1px solid #202a38;color:#fff;padding:0 15px;margin:6px 0;outline:none}.auth-primary{width:100%;height:52px;border:0;border-radius:15px;background:#1687ff;color:#fff;font-weight:900;margin-top:12px}.auth-error{min-height:20px;color:#ff6b7a;font-size:13px;margin:8px 2px}.auth-back{border:0;background:transparent;color:#8f9bad;padding:10px 0}
+</style>
+</head>
+<body>
+<div id="onboarding"><div class="ob-glow"></div><div class="ob-glow2"></div><div class="ob-wrap"><div class="ob-top"><button class="ob-skip" id="obSkip">Skip</button></div><div class="ob-slides"><section class="ob-slide active"><div class="ob-logo">E</div><h1>Welcome to E-Message</h1><p>A modern private messenger for fast conversations and real-time communication.</p></section><section class="ob-slide"><div class="ob-icon">💬</div><h2>Chat your way</h2><p>Find people by their unique username, message them and react to conversations.</p></section><section class="ob-slide"><div class="ob-icon">📞</div><h2>Voice & video calls</h2><p>Start internet calls directly from a person's conversation.</p></section><section class="ob-slide"><div class="ob-icon">🔒</div><h2>Your identity</h2><p>Create one unique username. Another account cannot claim the same username.</p></section></div><div class="ob-dots" id="obDots"></div><div class="ob-actions"><button class="ob-btn ob-back" id="obBack">Back</button><button class="ob-btn ob-next" id="obNext">Next</button></div></div></div>
+<div id="authScreen"><div class="auth-card"><button class="auth-back" id="authBack">← Back</button><div class="auth-brand"><div class="auth-brand-mark">E</div><div><b>E-Message</b><div class="auth-sub">Simple. Fast. Connected.</div></div></div><h2 id="authTitle">Create your account</h2><p id="authDesc">Choose a unique username so people can find you.</p><div class="auth-tabs"><button class="auth-tab active" id="signupTab">Sign up</button><button class="auth-tab" id="loginTab">Log in</button></div><div class="auth-form"><input id="obUsername" placeholder="Username (e.g. samiul_07)"><input id="obEmail" type="email" placeholder="Email address"><input id="obPassword" type="password" placeholder="Password"><div class="auth-error" id="obAuthError"></div><button class="auth-primary" id="obAuthBtn">Create account</button></div></div></div>
+
+<div class="app" id="app">
+  <aside class="sidebar">
+    <div class="brand"><div>E‑<b>Message</b><div class="me" id="meLabel">Not signed in</div></div><button class="icon" id="logoutBtn" title="Logout">↪</button></div>
+    <div class="topbar"><button class="active">Chats</button><button>Updates</button><button>Calls</button></div>
+    <div class="search"><input id="userSearch" placeholder="Search username…"></div>
+    <div class="filter"><button class="active">All</button><button>Unread</button><button>Groups</button></div>
+    <div class="chatlist" id="chatlist"></div>
+  </aside>
+  <main class="main">
+    <div class="empty" id="empty"><strong>Private, real-time messaging</strong>Search a username to start a conversation.</div>
+    <section id="conversation" style="display:none;height:100%;flex-direction:column">
+      <header class="header">
+        <button class="back" id="backBtn">‹</button><img class="avatar" id="headAvatar" src=""><div class="headinfo"><div class="headname" id="headName"></div><div class="status" id="headStatus">online</div></div>
+        <div class="callbtns"><button class="icon" id="voiceBtn" title="Voice call">☎</button><button class="icon" id="videoBtn" title="Video call">▣</button></div>
+      </header>
+      <div class="messages" id="messages"></div>
+      <form class="composer" id="composer"><input id="messageInput" autocomplete="off" placeholder="Message…"><button class="send">➤</button></form>
+    </section>
+  </main>
+</div>
+
+<div class="auth" id="auth">
+ <div class="authbox">
+  <h1 id="authTitle">Create your E‑Message account</h1><p>Choose a unique username. One username can belong to only one account.</p>
+  <input id="email" type="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password (6+ characters)">
+  <input id="username" placeholder="Username (e.g. samiul_07)" maxlength="24">
+  <div class="error" id="authError"></div><button class="primary" id="authSubmit">Create account</button><button class="switch" id="authSwitch">Already have an account? Sign in</button>
+ </div>
+</div>
+
+<div class="call" id="call">
+ <div class="callbox">
+  <video id="remoteVideo" class="remote" autoplay playsinline></video><video id="selfVideo" class="self" autoplay muted playsinline></video>
+  <div class="calltop"><div class="callname" id="callName"></div><div class="callstate" id="callState">Connecting…</div></div>
+  <div class="controls"><button class="control" id="muteBtn">🎤</button><button class="control" id="camBtn">📷</button><button class="control end" id="endBtn">☎</button></div>
+ </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://ymntvfycqrheriqdfriy.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_rbWVubme8RvqGnndoD-dzg_JaMMznf8";
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+const $=id=>document.getElementById(id);
+let me=null,current=null,currentConversationId=null,msgChannel=null,callChannel=null,pc=null,localStream=null,muted=false,cameraOff=false;
+const toast=t=>{$("toast").textContent=t;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2200)};
+const avatar=u=>"https://api.dicebear.com/9.x/initials/svg?seed="+encodeURIComponent(u||"User");
+
+function normalizeUsername(v){return v.trim().toLowerCase().replace(/^@/,"")}
+function validUsername(v){return /^[a-z0-9_]{3,24}$/.test(v)}
+
+async function init(){
+ const {data:{session}}=await sb.auth.getSession();
+ if(session){ document.getElementById("onboarding").classList.add("hidden"); document.getElementById("authScreen").classList.remove("show"); await loadMe(session.user); }
+ else $("auth").style.display="grid";
+ sb.auth.onAuthStateChange(async(e,s)=>{if(s) await loadMe(s.user);else{me=null;$("auth").style.display="grid"}});
+}
+async function loadMe(user){
+ const {data,error}=await sb.from("profiles").select("*").eq("id",user.id).maybeSingle();
+ if(error){$("authError").textContent=error.message;return}
+ if(!data){$("auth").style.display="grid";return}
+ me=data;$("auth").style.display="none";$("meLabel").textContent="@"+data.username;loadChats();subscribePresence();subscribeCalls();
+}
+$("authSwitch").onclick=()=>{const signup=$("authSubmit").dataset.signup!=="0";$("authSubmit").dataset.signup=signup?"0":"1";$("authTitle").textContent=signup?"Sign in to E‑Message":"Create your E‑Message account";$("authSubmit").textContent=signup?"Sign in":"Create account";$("username").style.display=signup?"none":"block";$("authSwitch").textContent=signup?"Create a new account":"Already have an account? Sign in";$("authError").textContent=""};
+$("authSubmit").onclick=async()=>{
+ const signup=$("authSubmit").dataset.signup!=="0",email=$("email").value.trim(),password=$("password").value,username=normalizeUsername($("username").value);
+ $("authError").textContent="";
+ if(!email||password.length<6){$("authError").textContent="Enter a valid email and 6+ character password.";return}
+ if(signup){
+   if(!validUsername(username)){ $("authError").textContent="Username must be 3–24 characters: a-z, 0-9, underscore.";return}
+   const {data:available,error:ue}=await sb.rpc("is_username_available",{requested_username:username});
+   if(ue){$("authError").textContent=ue.message;return}
+   if(!available){$("authError").textContent="Username unavailable — choose another username.";return}
+   const {data:auth,error:ae}=await sb.auth.signUp({
+     email,
+     password,
+     options:{data:{username,display_name:username}}
+   });
+   if(ae){$("authError").textContent=ae.message;return}
+   if(!auth.user){$("authError").textContent="Account creation failed. Please try again.";return}
+   if(!auth.session){
+     $("authError").textContent="Account created. Check your email to confirm your account, then sign in.";
+     toast("Account created — check your email");
+     return;
+   }
+   await loadMe(auth.user);
+   toast("Account created");
+ }else{
+   const {data,error}=await sb.auth.signInWithPassword({email,password});
+   if(error){$("authError").textContent=error.message;return}
+   await loadMe(data.user);
+ }
+};
+
+async function loadChats(){
+ const {data}=await sb.from("messages").select("conversation_id,sender_id,body,created_at").order("created_at",{ascending:false}).limit(200);
+ const ids=[...new Set((data||[]).flatMap(x=>[x.sender_id]).filter(x=>x!==me.id))];
+ $("chatlist").innerHTML="";
+ if(!ids.length)return;
+ const {data:users}=await sb.from("profiles").select("*").in("id",ids);
+ (users||[]).forEach(u=>{const last=(data||[]).find(m=>m.sender_id===u.id);renderChat(u,last)});
+}
+function renderChat(u,last){const el=document.createElement("div");el.className="chat";el.dataset.username=u.username;el.innerHTML=`<img class="avatar" src="${avatar(u.username)}"><div class="chatmain"><div class="row"><div class="name">@${u.username}</div><div class="time">${last?new Date(last.created_at).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}):""}</div></div><div class="preview">${last?.body||"Start a conversation"}</div></div>`;el.onclick=()=>openChat(u);$("chatlist").appendChild(el)}
+$("userSearch").addEventListener("keydown",async e=>{if(e.key!=="Enter")return;const u=normalizeUsername(e.target.value);if(!validUsername(u)){toast("Enter a valid username");return}const {data}=await sb.from("profiles").select("*").eq("username",u).maybeSingle();if(!data){toast("Username unavailable / user not found");return}openChat(data);e.target.value=""});
+async function openChat(u){
+ current=u;
+ const {data:cid,error}=await sb.rpc("get_or_create_direct_conversation",{other_user:u.id});
+ if(error){toast(error.message);return}
+ currentConversationId=cid;
+ $("empty").style.display="none";$("conversation").style.display="flex";$("app").classList.add("chatopen");
+ $("headName").textContent="@"+u.username;$("headAvatar").src=avatar(u.username);$("headStatus").textContent="online";
+ await loadMessages(); subscribeMessages();
+}
+$("backBtn").onclick=()=>{$("app").classList.remove("chatopen")};
+async function loadMessages(){
+ if(!currentConversationId)return;
+ const {data,error}=await sb.from("messages").select("*").eq("conversation_id",currentConversationId).order("created_at");
+ if(error){toast(error.message);return}
+ $("messages").innerHTML="";(data||[]).forEach(renderMessage);scrollBottom();
+}
+function renderMessage(m){const d=document.createElement("div");d.className="bubble "+(m.sender_id===me.id?"mine":"theirs");d.innerHTML=`<div>${escapeHtml(m.body)}</div><div class="meta">${new Date(m.created_at).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})}</div>`;$("messages").appendChild(d)}
+$("composer").onsubmit=async e=>{e.preventDefault();const body=$("messageInput").value.trim();if(!body||!current||!currentConversationId)return;const {error}=await sb.from("messages").insert({conversation_id:currentConversationId,sender_id:me.id,body,message_type:"text"});if(error)toast(error.message);else $("messageInput").value=""}
+function subscribeMessages(){if(msgChannel)sb.removeChannel(msgChannel);msgChannel=sb.channel("messages:"+currentConversationId).on("postgres_changes",{event:"INSERT",schema:"public",table:"messages",filter:`conversation_id=eq.${currentConversationId}`},p=>{renderMessage(p.new);scrollBottom();loadChats()}).subscribe()}
+function scrollBottom(){$("messages").scrollTop=$("messages").scrollHeight}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+async function subscribePresence(){/* presence can be upgraded to realtime private channels */}
+$("voiceBtn").onclick=()=>startCall("audio");$("videoBtn").onclick=()=>startCall("video");
+async function saveSignal(to,payload){const {error}=await sb.from("call_signals").insert({sender_id:me.id,receiver_id:to,payload});if(error)console.error(error)}
+async function startCall(kind){if(!current)return;try{localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:kind==="video"})}catch(e){toast("Microphone/camera permission is required.");return}$("callName").textContent="@"+current.username;$("callState").textContent="Calling…";$("call").classList.add("show");$("selfVideo").style.display=kind==="video"?"block":"none";$("selfVideo").srcObject=kind==="video"?localStream:null;await createPeer(kind,true)}
+async function createPeer(kind,caller){pc=new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"}]});localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));pc.ontrack=e=>{$("remoteVideo").srcObject=e.streams[0]};pc.onicecandidate=e=>{if(e.candidate&&current)saveSignal(current.id,{type:"ice",candidate:e.candidate})};pc.onconnectionstatechange=()=>{if(pc.connectionState==="connected")$("callState").textContent="Connected";if(["failed","disconnected","closed"].includes(pc.connectionState))endCall(false)};if(caller){const offer=await pc.createOffer();await pc.setLocalDescription(offer);await saveSignal(current.id,{type:"offer",sdp:offer,kind})}}
+async function acceptIncoming(row){const from=row.sender_id;const {data:u}=await sb.from("profiles").select("*").eq("id",from).maybeSingle();if(!u)return;await openChat(u);const kind=row.payload.kind||"audio";try{localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:kind==="video"})}catch(e){toast("Microphone/camera permission denied.");return}$("callName").textContent="@"+u.username;$("callState").textContent="Incoming call";$("call").classList.add("show");$("selfVideo").style.display=kind==="video"?"block":"none";$("selfVideo").srcObject=kind==="video"?localStream:null;await createPeer(kind,false);await pc.setRemoteDescription(row.payload.sdp);const answer=await pc.createAnswer();await pc.setLocalDescription(answer);await saveSignal(from,{type:"answer",sdp:answer})}
+async function handleSignal(row){if(row.sender_id===me.id)return;const x=row.payload;if(x.type==="offer"){acceptIncoming(row);return}if(!pc)return;if(x.type==="answer"){await pc.setRemoteDescription(x.sdp);$("callState").textContent="Connecting…"}else if(x.type==="hangup"){endCall(false)}else if(x.type==="ice"&&x.candidate){try{await pc.addIceCandidate(x.candidate)}catch(e){}}}
+async function subscribeCalls(){sb.channel("incoming-calls:"+me.id).on("postgres_changes",{event:"INSERT",schema:"public",table:"call_signals",filter:`receiver_id=eq.${me.id}`},p=>handleSignal(p.new)).subscribe()}
+$("endBtn").onclick=()=>endCall(true);$("muteBtn").onclick=()=>{muted=!muted;localStream?.getAudioTracks().forEach(t=>t.enabled=!muted);$("muteBtn").textContent=muted?"🔇":"🎤"};$("camBtn").onclick=()=>{cameraOff=!cameraOff;localStream?.getVideoTracks().forEach(t=>t.enabled=!cameraOff);$("camBtn").textContent=cameraOff?"🚫":"📷"};async function endCall(notify=true){if(notify&&current)await saveSignal(current.id,{type:"hangup"});if(localStream)localStream.getTracks().forEach(t=>t.stop());if(pc)pc.close();localStream=null;pc=null;$("call").classList.remove("show")}
+$("logoutBtn").onclick=async()=>{await sb.auth.signOut();location.reload()};
+init();
+</script>
+
+
+<script>
+// Onboarding auth bridge: the onboarding form uses the same Supabase client as the main auth form.
+(async function(){
+ const btn=document.getElementById("obAuthBtn"), err=document.getElementById("obAuthError");
+ if(!btn) return;
+ btn.onclick=async function(){
+   err.textContent="";
+   btn.disabled=true; btn.textContent=window.__obMode==="login"?"Logging in…":"Creating account…";
+   try{
+     const mode=window.__obMode||"signup";
+     const email=document.getElementById("obEmail").value.trim();
+     const password=document.getElementById("obPassword").value;
+     const username=normalizeUsername(document.getElementById("obUsername").value);
+     if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){err.textContent="Enter a valid email address.";return}
+     if(password.length<6){err.textContent="Password must be at least 6 characters.";return}
+     if(mode==="signup"){
+       if(!validUsername(username)){err.textContent="Username must be 3–24 characters: a-z, 0-9, underscore.";return}
+       const {data:available,error:ue}=await sb.rpc("is_username_available",{requested_username:username});
+       if(ue){err.textContent=ue.message;return}
+       if(!available){err.textContent="Username unavailable — choose another username.";return}
+       const {data,error}=await sb.auth.signUp({email,password,options:{data:{username,display_name:username}}});
+       if(error){err.textContent=error.message;return}
+       if(!data.user){err.textContent="Account creation failed. Please try again.";return}
+       if(!data.session){
+         err.className="auth-error ok";
+         err.textContent="Account created! Check your email to confirm your account, then log in.";
+         toast("Account created — check your email");
+         return;
+       }
+       document.getElementById("onboarding").classList.add("hidden");
+       document.getElementById("authScreen").classList.remove("show");
+       await loadMe(data.user); toast("Account created");
+     }else{
+       const {data,error}=await sb.auth.signInWithPassword({email,password});
+       if(error){err.textContent=error.message;return}
+       document.getElementById("onboarding").classList.add("hidden");
+       document.getElementById("authScreen").classList.remove("show");
+       await loadMe(data.user); toast("Welcome back");
+     }
+   }catch(e){err.textContent=e?.message||"Something went wrong. Please try again."}
+   finally{btn.disabled=false;btn.textContent=(window.__obMode||"signup")==="login"?"Log in":"Create account";}
+ };
+})();
+</script>
+
+<script>
+(function(){const ob=document.getElementById('onboarding'),auth=document.getElementById('authScreen'),slides=[...document.querySelectorAll('.ob-slide')],dots=document.getElementById('obDots'),next=document.getElementById('obNext'),back=document.getElementById('obBack');let step=0;slides.forEach((_,i)=>{const d=document.createElement('i');d.className='ob-dot'+(i?'':' active');dots.appendChild(d)});function render(){slides.forEach((s,i)=>s.classList.toggle('active',i===step));[...dots.children].forEach((d,i)=>d.classList.toggle('active',i===step));back.style.visibility=step?'visible':'hidden';next.textContent=step===slides.length-1?'Get started':'Next'}function openAuth(){ob.classList.add('hidden');auth.classList.add('show')}next.onclick=()=>step<slides.length-1?(step++,render()):openAuth();back.onclick=()=>step>0&&(step--,render());document.getElementById('obSkip').onclick=openAuth;document.getElementById('authBack').onclick=()=>{auth.classList.remove('show');ob.classList.remove('hidden');step=0;render()};document.getElementById('signupTab').onclick=()=>mode('signup');document.getElementById('loginTab').onclick=()=>mode('login');function mode(m){window.__obMode=m;let s=m==='signup';document.getElementById('signupTab').classList.toggle('active',s);document.getElementById('loginTab').classList.toggle('active',!s);document.getElementById('authTitle').textContent=s?'Create your account':'Welcome back';document.getElementById('authDesc').textContent=s?'Choose a unique username so people can find you.':'Log in to continue to E-Message.';document.getElementById('obUsername').style.display=s?'block':'none';document.getElementById('obAuthBtn').textContent=s?'Create account':'Log in';document.getElementById('obAuthError').className='auth-error';document.getElementById('obAuthError').textContent=''}window.__obMode='signup';render()})();
+</script>
+</body></html>
